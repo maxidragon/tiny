@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  backend:
+    container_name: tiny-backend
+    network_mode: host
+    build: ./backend
+    env_file:
+      - .env
+    restart: unless-stopped

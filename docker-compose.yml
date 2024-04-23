@@ -2,6 +2,7 @@ version: "3.3"
 
 services:
   backend:
+    image: maxidragon/tiny-backend:latest
     container_name: tiny-backend
     network_mode: host
     build: ./backend

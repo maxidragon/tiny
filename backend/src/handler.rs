@@ -18,7 +18,7 @@ pub async fn create_url_handler(
     let id: String = uuid::Uuid::new_v4().to_string();
     let id_clone = id.clone();
     let code = body.code.unwrap_or_else(|| generate_random_code());
-    let query_result = sqlx::query(r#"INSERT INTO urls (id, code, url) VALUES (?, ?, ?, ?)"#)
+    let query_result = sqlx::query(r#"INSERT INTO urls (id, code, url) VALUES (?, ?, ?)"#)
         .bind(id)
         .bind(code.clone())
         .bind(body.url.clone())
@@ -68,7 +68,7 @@ pub async fn get_url_handler(
     Path(code): Path<String>,
     State(data): State<Arc<AppState>>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let query_result = sqlx::query_as::<_, UrlModel>(r#"SELECT * FROM url WHERE url = ?"#)
+    let query_result = sqlx::query_as::<_, UrlModel>(r#"SELECT * FROM urls WHERE code = ?"#)
         .bind(&code)
         .fetch_one(&data.db)
         .await;

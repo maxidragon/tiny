@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useState} from 'react'
+import toast, {Toaster} from "react-hot-toast";
+import {createUrl, CreateUrlData, UrlData} from "./api.ts";
+import CreateUrl from "./Components/CreateUrl.tsx";
+import ViewUrl from "./Components/ViewUrl.tsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [urlData, setUrlData] = useState<UrlData | null>(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleSendData = async (data: CreateUrlData) => {
+        const response = await createUrl({
+            url: data.url,
+            code: data.code || undefined
+        });
+
+        if (response.status === 200) {
+            toast.success("URL shorten successfully");
+            setUrlData(response.data);
+        } else if (response.status === 409) {
+            toast.error("A URL with this code already exists");
+        } else {
+            toast.error("Something went wrong");
+        }
+    };
+    return (
+        <>
+            <Toaster/>
+            {urlData ? <ViewUrl url={urlData} /> : <CreateUrl handleSendData={handleSendData}/>}
+        </>
+    )
 }
 
 export default App
